@@ -2,7 +2,7 @@
   min-height: 100vh;
   background: #f4f4f6;
   padding: 20px;
-  text-align: center;
+  /* text-align: center; */
 }
 
 .content {
@@ -63,6 +63,13 @@
   margin-bottom: 15px;
   text-align: left;
   font-family: 'ALSHauss', sans-serif;
+}
+
+.editorContainer {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .textarea {
@@ -155,6 +162,46 @@
   box-shadow: none;
 }
 
+.errorMessage {
+  color: #e74c3c;
+  background: #fdf2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 20px 0;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: 'ALSHauss', sans-serif;
+}
+
+.successMessage {
+  color: #27ae60;
+  background: #f2fdf3;
+  border: 1px solid #cafed1;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 20px 0;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: 'ALSHauss', sans-serif;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.loadingContainer .title {
+  margin-bottom: 30px;
+  color: #7f8c8d;
+}
+
 /* Loading animation */
 .save:disabled::after {
   content: '';
@@ -211,6 +258,11 @@
     padding: 14px 20px;
     font-size: 14px;
   }
+  
+  .editorContainer {
+    flex-direction: column;
+    gap: 15px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -236,5 +288,9 @@
   .save {
     padding: 12px 16px;
     font-size: 13px;
+  }
+  
+  .editorContainer {
+    gap: 12px;
   }
 }

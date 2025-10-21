@@ -1,43 +1,40 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./ManagerPage.module.css";
-import Header from "../../components/Header";
+import Header from "@components/Header";
+import { Context } from "@main";
+import { observer } from "mobx-react-lite";
 
 function ManagerPage() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const { authStore } = useContext(Context);
+  const { managerStore } = useContext(Context);
+
   const handleSentEmailsNavigation = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Здесь будет логика перехода на страницу просмотра отправленных писем
     console.log("Переход на страницу просмотра отправленных писем");
-    // Имитация загрузки
-    setTimeout(() => {
-      setIsLoading(false);
-      // логика перехода на страницу просмотра отправленных писем
-      navigate('/manager/sent-emails');
-    }, 1000);
+    navigate(`/manager/sent-emails/${managerStore.pageNum}`);
   };
 
-  const handleSendNewEmailsNavigation = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // Здесь будет логика перехода на страницу отправления новых писем
-    console.log("Переход на страницу отправления новых писем");
-    // Имитация загрузки
-    setTimeout(() => {
-      setIsLoading(false);
-      // логика перехода на страницу отправления новых писем
-      navigate('/manager/send-emails');
-    }, 1000);
-  };
-
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // Здесь будет логика выхода из аккаунта
-    console.log("Выход из аккаунта администратора");
-    // Очистка токенов, редирект на страницу авторизации и т.д.
-    navigate('/auth');
+    setIsLoading(true);
+    console.log("Попытка выхода из аккаунта менежера");
+    
+    try {
+      await authStore.logout();
+      managerStore.reset();
+      console.log("Попытка выхода из аккаунта менежера удалась!"); 
+      navigate('/auth');
+    } catch (error) {
+      console.log("Попытка выхода из аккаунта менежера НЕ удалась!", error); 
+      alert("Попытка выхода из аккаунта менежера НЕ удалась!");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -60,19 +57,6 @@ function ManagerPage() {
               {isLoading ? "Загрузка..." : "Отправленные письма"}
             </button>
           </form>
-
-          <form onSubmit={handleSendNewEmailsNavigation} className={styles.form}>
-            <div className={styles.description}>
-              <h3>Отправить новые письма кандидату/кандидатам</h3>
-            </div>
-            <button 
-              type="submit" 
-              className={styles.button}
-              disabled={isLoading}
-            >
-              {isLoading ? "Загрузка..." : "Отправить письма"}
-            </button>
-          </form>
         </div>
       </div>
 
@@ -87,4 +71,4 @@ function ManagerPage() {
   );
 }
 
-export default ManagerPage;
+export default observer(ManagerPage);

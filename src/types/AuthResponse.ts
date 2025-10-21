@@ -6,6 +6,6 @@ export interface AuthResponse {
     role: string;
     // role: Role;
     accessToken: string;
-    refreshToken: string;
+    // refreshToken: string;
 };
 

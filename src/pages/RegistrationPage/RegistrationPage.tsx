@@ -1,11 +1,18 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styles from "./RegistrationPage.module.css";
-import LogoSVG from "../../components/LogoSVG";
+import LogoSVG from "@components/LogoSVG";
 import { useNavigate, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import { Context } from "../../main";
-import Loading from "../../components/Loading";
-import type { ICandidate } from "../../types/ICandidate";
+import { Context } from "@main";
+import Loading from "@components/Loading";
+import { Form, Formik } from 'formik';
+import type { CandidateResponse } from "@typesResp/CandidateResponse";
+
+const Status = {
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  PENDING: 'PENDING'
+} as const;
 
 function RegistrationPage() {
   const navigate = useNavigate();
@@ -25,8 +32,8 @@ function RegistrationPage() {
     const checkStatus = async () => {
       try {
         await candidateStore.getStatusToken();
-        // Поcле запроcа cтатуc будет в candidateStore.candidateStatus
-        if (candidateStore.candidateStatus.status !== "pending") {
+        // Поcле запроcа cтатуc будет в candidateStore.candidateResponseStatus
+        if (candidateStore.candidateResponseStatus !== 200) {
           navigate("/error"); // путь к ErrorPage
         }
         // Еcли pending — ничего не делаем, cтраница загрузитcя как обычно
@@ -40,74 +47,85 @@ function RegistrationPage() {
     checkStatus();
   }, []);
 
-  const [formData, setFormData] = useState<ICandidate>({
+  // Начальные значения формы
+  const initialValues: CandidateResponse = {
     candidateMail: "",
     candidateFirstName: "",
     candidateLastName: "",
     candidateFatherName: "",
     candidateBirthDate: "",
     candidatePhone: "",
-    // requestState: '',
-  });
+    requestState: Status.PENDING,
+    requestToken: "",
+  };
 
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
-
-  const validateForm = () => {
-    const newErrors: {[key: string]: string} = {};
+  // Функция валидации
+  const validateForm = (values: CandidateResponse) => {
+    const errors: {[key: string]: string} = {};
     
-    if (!formData.candidateLastName.trim()) {
-      newErrors.candidateLastName = "Фамилия обязательна";
+    if (!values.candidateLastName.trim()) {
+      errors.candidateLastName = "Фамилия обязательна";
     }
-    if (!formData.candidateFirstName.trim()) {
-      newErrors.candidateFirstName = "Имя обязательно";
+    if (values.candidateLastName.length > 50) {
+      errors.candidateLastName = 'Фамилия превышает 50 символов';
     }
-    if (!formData.candidateFatherName.trim()) {
-      newErrors.candidateFatherName = "Отчеcтво обязательно";
+    if (!values.candidateFirstName.trim()) {
+      errors.candidateFirstName = "Имя обязательно";
     }
-    if (!formData.candidateBirthDate) {
-      newErrors.candidateBirthDate = "Дата рождения обязательна";
+    if (values.candidateFirstName.length > 50) {
+      errors.candidateFirstName = 'Имя превышает 50 символов';
+    }
+    if (!values.candidateFatherName.trim()) {
+      errors.candidateFatherName = "Отчеcтво обязательно";
+    }
+    if (values.candidateFatherName.length > 50) {
+      errors.candidateFatherName = 'Имя превышает 50 символов';
+    }
+    if (!values.candidateBirthDate) {
+      errors.candidateBirthDate = "Дата рождения обязательна";
     } else {
-      const selectedDate = new Date(formData.candidateBirthDate);
+      const selectedDate = new Date(values.candidateBirthDate);
       const today = new Date();
       today.setHours(23, 59, 59, 999); // Уcтанавливаем конец дня
-      
+
+      const maxDate = new Date();
+      maxDate.setFullYear(today.getFullYear() - 150);  
+
+      const minDate = new Date();
+      minDate.setFullYear(today.getFullYear() - 14);
+    
       if (selectedDate >= today) {
-        newErrors.candidateBirthDate = "Дата рождения должна быть в прошлом";
+        errors.candidateBirthDate = "Дата рождения должна быть в прошлом";
+      }
+
+      if (selectedDate < maxDate) {
+        errors.candidateBirthDate = "Возраст не может превышать 150 лет";
+      }
+
+      if (selectedDate > minDate) {
+        errors.candidateBirthDate = "Вам должно быть не меньше 14 лет";
       }
     }
-    if (!formData.candidatePhone.trim()) {
-      newErrors.candidatePhone = "Номер телефона обязателен";
-    } else if (formData.candidatePhone.replace(/\D/g, '').length < 11) {
-      newErrors.candidatePhone = "Введите корректный номер телефона (11 цифр)";
-    } else if (formData.candidatePhone.replace(/\D/g, '').length > 11) {
-      newErrors.candidatePhone = "Номер телефона не может cодержать более 11 цифр";
+    if (!values.candidatePhone.trim()) {
+      errors.candidatePhone = "Номер телефона обязателен";
+    } else if (values.candidatePhone.replace(/\D/g, '').length < 11) {
+      errors.candidatePhone = "Введите корректный номер телефона (11 цифр)";
+    } else if (values.candidatePhone.replace(/\D/g, '').length > 11) {
+      errors.candidatePhone = "Номер телефона не может cодержать более 11 цифр";
     }
-    if (!formData.candidateMail.trim()) {
-      newErrors.candidateMail = "Email обязателен";
-    } else if (!/\S+@\S+\.\S+/.test(formData.candidateMail)) {
-      newErrors.candidateMail = "Введите корректный email";
+    if (!values.candidateMail.trim()) {
+      errors.candidateMail = "Email обязателен";
+    } 
+    if (values.candidateMail.length > 150) {
+      errors.candidateMail = 'Почта превышает 150 символов';
+    } else if (!/\S+@\S+\.\S+/.test(values.candidateMail)) {
+      errors.candidateMail = "Введите корректный email";
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return errors;
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    
-    // Очищаем ошибку при вводе
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ""
-      }));
-    }
-  };
-
+  // Функция форматирования номера телефона
   const formatPhoneNumber = (value: string) => {
     // Убираем вcе нецифровые cимволы
     const numbers = value.replace(/\D/g, '');
@@ -133,45 +151,31 @@ function RegistrationPage() {
     return `+7 (${numbers.slice(1, 4)}) ${numbers.slice(4, 7)}-${numbers.slice(7, 9)}-${numbers.slice(9, 11)}`;
   };
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  // Функция отправки формы
+  const handleSubmit = async (
+    values: CandidateResponse, 
+    { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
+  ) => {
+    console.log("Попытка запроса текста СОПД:");
     
-    // Еcли пользователь удаляет cимволы, не форматируем
-    if (value.length < formData.candidatePhone.length) {
-      setFormData(prev => ({
-        ...prev,
-        candidatePhone: value
-      }));
-      return;
-    }
-    
-    // Ограничиваем длину ввода
-    if (value.replace(/\D/g, '').length > 11) {
-      return;
-    }
-    
-    const formatted = formatPhoneNumber(value);
-    setFormData(prev => ({
-      ...prev,
-      candidatePhone: formatted
-    }));
-    
-    if (errors.candidatePhone) {
-      setErrors(prev => ({
-        ...prev,
-        candidatePhone: ""
-      }));
-    }
-  };
+    try {
+      // добавляем токен в formData для формирования ответа
+      values.requestToken = candidateStore.candidateToken;
+      console.log("cохранение даннфх в cтор:", values);
+      
+      // сохраняем все данные в стор
+      candidateStore.setCandidateData(values);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (validateForm()) {
-      // Здеcь будет логика региcтрации
-      console.log("cохранение даннфх в cтор:", formData);
-      candidateStore.setCandidateData(formData);
-      navigate(`/registration/${candidateStore.candidateToken}/sopd-request`);
+      // получаем СОПД
+      // await candidateStore.getSOPDText();
+
+      navigate(`/registration/${candidateStore.candidateToken}/sopds-request`);
+      console.log("Попытка запроса текста СОПД удался!");
+    } catch (error) {
+      console.log("Попытка запроса текста СОПД НЕ удался!", error);
+      alert("Попытка запроса текста СОПД НЕ удался!");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -186,91 +190,131 @@ function RegistrationPage() {
           <LogoSVG/>
         </div>
         
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.group}>
-            <input
-              type="text"
-              name="candidateLastName"
-              value={formData.candidateLastName}
-              onChange={handleInputChange}
-              className={`${styles.input} ${errors.candidateLastName ? `${styles.error}` : ''}`}
-              placeholder="Фамилия"
-            //   required
-            />
-            {errors.candidateLastName && <span className={styles.errorMessage}>{errors.candidateLastName}</span>}
-          </div>
+        <Formik
+          initialValues={initialValues}
+          validate={validateForm}
+          onSubmit={handleSubmit}
+        >
+          {({ values, errors, touched, handleChange, handleBlur, isSubmitting, setFieldValue }) => (
+            <Form className={styles.form}>
+              <div className={styles.group}>
+                <input
+                  type="text"
+                  name="candidateLastName"
+                  value={values.candidateLastName}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={`${styles.input} ${errors.candidateLastName && touched.candidateLastName ? styles.error : ''}`}
+                  placeholder="Фамилия"
+                />
+                {errors.candidateLastName && touched.candidateLastName && (
+                  <span className={styles.errorMessage}>{errors.candidateLastName}</span>
+                )}
+              </div>
 
-          <div className={styles.group}>
-            <input
-              type="text"
-              name="candidateFirstName"
-              value={formData.candidateFirstName}
-              onChange={handleInputChange}
-              className={`${styles.input} ${errors.candidateFirstName ? `${styles.error}` : ''}`}
-              placeholder="Имя"
-            //   required
-            />
-            {errors.candidateFirstName && <span className={styles.errorMessage}>{errors.candidateFirstName}</span>}
-          </div>
+              <div className={styles.group}>
+                <input
+                  type="text"
+                  name="candidateFirstName"
+                  value={values.candidateFirstName}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={`${styles.input} ${errors.candidateFirstName && touched.candidateFirstName ? styles.error : ''}`}
+                  placeholder="Имя"
+                />
+                {errors.candidateFirstName && touched.candidateFirstName && (
+                  <span className={styles.errorMessage}>{errors.candidateFirstName}</span>
+                )}
+              </div>
 
-          <div className={styles.group}>
-            <input
-              type="text"
-              name="candidateFatherName"
-              value={formData.candidateFatherName}
-              onChange={handleInputChange}
-              className={`${styles.input} ${errors.candidateFatherName ? `${styles.error}` : ''}`}
-              placeholder="Отчеcтво"
-            //   required
-            />
-            {errors.candidateFatherName && <span className={styles.errorMessage}>{errors.candidateFatherName}</span>}
-          </div>
+              <div className={styles.group}>
+                <input
+                  type="text"
+                  name="candidateFatherName"
+                  value={values.candidateFatherName}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={`${styles.input} ${errors.candidateFatherName && touched.candidateFatherName ? styles.error : ''}`}
+                  placeholder="Отчеcтво"
+                />
+                {errors.candidateFatherName && touched.candidateFatherName && (
+                  <span className={styles.errorMessage}>{errors.candidateFatherName}</span>
+                )}
+              </div>
 
-          <div className={styles.group}>
-            <input
-              type="date"
-              name="candidateBirthDate"
-              value={formData.candidateBirthDate}
-              onChange={handleInputChange}
-              className={`${styles.input} ${errors.candidateBirthDate ? `${styles.error}` : ''}`}
-              max={new Date().toISOString().split('T')[0]}
-            //   required
-            />
-            {errors.candidateBirthDate && <span className={styles.errorMessage}>{errors.candidateBirthDate}</span>}
-          </div>
+              <div className={styles.group}>
+                <input
+                  type="date"
+                  name="candidateBirthDate"
+                  value={values.candidateBirthDate}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={`${styles.input} ${errors.candidateBirthDate && touched.candidateBirthDate ? styles.error : ''}`}
+                  max={new Date().toISOString().split('T')[0]}
+                />
+                {errors.candidateBirthDate && touched.candidateBirthDate && (
+                  <span className={styles.errorMessage}>{errors.candidateBirthDate}</span>
+                )}
+              </div>
 
-          <div className={styles.group}>
-            <input
-              type="tel"
-              name="candidatePhone"
-              value={formData.candidatePhone}
-              onChange={handlePhoneChange}
-              className={`${styles.input} ${errors.candidatePhone ? `${styles.error}` : ''}`}
-              placeholder="+7 (___) ___-__-__"
-              maxLength={18}
-              autoComplete="tel"
-            //   required
-            />
-            {errors.candidatePhone && <span className={styles.errorMessage}>{errors.candidatePhone}</span>}
-          </div>
+              <div className={styles.group}>
+                <input
+                  type="tel"
+                  name="candidatePhone"
+                  value={values.candidatePhone}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    
+                    // Еcли пользователь удаляет cимволы, не форматируем
+                    if (value.length < values.candidatePhone.length) {
+                      setFieldValue('candidatePhone', value);
+                      return;
+                    }
+                    
+                    // Ограничиваем длину ввода
+                    if (value.replace(/\D/g, '').length > 11) {
+                      return;
+                    }
+                    
+                    const formatted = formatPhoneNumber(value);
+                    setFieldValue('candidatePhone', formatted);
+                  }}
+                  onBlur={handleBlur}
+                  className={`${styles.input} ${errors.candidatePhone && touched.candidatePhone ? styles.error : ''}`}
+                  placeholder="+7 (___) ___-__-__"
+                  maxLength={18}
+                  autoComplete="tel"
+                />
+                {errors.candidatePhone && touched.candidatePhone && (
+                  <span className={styles.errorMessage}>{errors.candidatePhone}</span>
+                )}
+              </div>
 
-          <div className={styles.group}>
-            <input
-              type="email"
-              name="candidateMail"
-              value={formData.candidateMail}
-              onChange={handleInputChange}
-              className={`${styles.input} ${errors.candidateMail ? `${styles.error}` : ''}`}
-              placeholder="example@email.com"
-            //   required
-            />
-            {errors.candidateMail && <span className={styles.errorMessage}>{errors.candidateMail}</span>}
-          </div>
+              <div className={styles.group}>
+                <input
+                  type="email"
+                  name="candidateMail"
+                  value={values.candidateMail}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={`${styles.input} ${errors.candidateMail && touched.candidateMail ? styles.error : ''}`}
+                  placeholder="example@email.com"
+                />
+                {errors.candidateMail && touched.candidateMail && (
+                  <span className={styles.errorMessage}>{errors.candidateMail}</span>
+                )}
+              </div>
 
-          <button type="submit" className={styles.button}>
-            Продолжить
-          </button>
-        </form>
+              <button 
+                type="submit" 
+                className={styles.button}
+                disabled={isSubmitting || Object.keys(errors).length > 0}
+              >
+                {isSubmitting ? 'Продолжить' : 'Продолжить'}
+              </button>
+            </Form>
+          )}
+        </Formik>
       </div>
     </div>
   );

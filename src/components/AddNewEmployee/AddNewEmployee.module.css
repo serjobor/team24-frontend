@@ -1,0 +1,320 @@
+.container {
+  min-height: 100vh;
+  background: #f4f4f6;
+  padding: 20px;
+  text-align: center;
+}
+
+.container.popup {
+  min-height: auto;
+  background: transparent;
+  padding: 0;
+}
+
+.content {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.card {
+  background: #FFF;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.card.popup {
+  background: transparent;
+  box-shadow: none;
+  padding: 16px 0;
+  border-radius: 0;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+  font-family: 'ALSHauss', sans-serif;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  font-family: 'ALSHauss', sans-serif;
+}
+
+.form {
+  width: 100%;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.fieldGroup:nth-child(3),
+.fieldGroup:nth-child(5) {
+  grid-column: span 2;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+  font-family: 'ALSHauss', sans-serif;
+}
+
+.input,
+.select {
+  padding: 10px 12px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: 'ALSHauss', sans-serif;
+  background: #fff;
+  color: #1f2937;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.input::placeholder {
+  color: #9ca3af;
+}
+
+.select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 14px;
+  padding-right: 32px;
+  appearance: none;
+}
+
+.error {
+  color: #dc2626;
+  font-size: 11px;
+  margin-top: 4px;
+  font-weight: 500;
+  font-family: 'ALSHauss', sans-serif;
+}
+
+.passwordHint {
+  font-size: 10px;
+  color: #6b7280;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.submitButton {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #FFF;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-family: 'ALSHauss', sans-serif;
+  min-width: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.submitButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: #FFF;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-family: 'ALSHauss', sans-serif;
+  min-width: 100px;
+}
+
+.cancelButton:hover {
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+}
+
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.successMessage {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  border: 1px solid #10b981;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.successIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.successText h4 {
+  margin: 0 0 3px 0;
+  color: #065f46;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'ALSHauss', sans-serif;
+}
+
+.successText p {
+  margin: 0;
+  color: #047857;
+  font-size: 13px;
+  font-family: 'ALSHauss', sans-serif;
+}
+
+.errorMessage {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border: 1px solid #dc2626;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.errorIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.errorMessage p {
+  margin: 0;
+  color: #991b1b;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'ALSHauss', sans-serif;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  
+  .card {
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  .title {
+    font-size: 20px;
+  }
+  
+  .subtitle {
+    font-size: 13px;
+  }
+  
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  
+  .fieldGroup:nth-child(3),
+  .fieldGroup:nth-child(5) {
+    grid-column: span 1;
+  }
+  
+  .actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .submitButton,
+  .cancelButton {
+    width: 100%;
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .card {
+    padding: 16px;
+  }
+  
+  .title {
+    font-size: 18px;
+  }
+  
+  .input,
+  .select {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  
+  .submitButton,
+  .cancelButton {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+}

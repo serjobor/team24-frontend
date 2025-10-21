@@ -1,26 +1,18 @@
-import { makeAutoObservable } from "mobx";
-import CandidateService from "../services/CandidateService";
-import type { ICandidate, IStatus } from "../types/ICandidate";
+import { makeAutoObservable, toJS } from "mobx";
+import CandidateService from "@services/CandidateService";
+import type { CandidateResponse } from "@typesResp/CandidateResponse";
 
 export default class CandidateStore {
-  candidateData: ICandidate = {
-    candidateMail: '',
-    candidateFirstName: '',
-    candidateLastName: '',
-    candidateFatherName: '',
-    candidateBirthDate: '',
-    candidatePhone: '',
-    // requestState?: string
-  };
-
+  candidateData = {} as CandidateResponse;
   candidateToken = '';
-  candidateStatus = {} as IStatus;
+  candidateResponseStatus = {} as number; 
+  sopdText = '';
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  setCandidateData(candidateData: ICandidate) {
+  setCandidateData(candidateData: CandidateResponse) {
     this.candidateData = candidateData;
   }
 
@@ -28,21 +20,33 @@ export default class CandidateStore {
     this.candidateToken = candidateToken;
   }
 
-  setCandidateStatus(candidateStatus: IStatus) {
-    this.candidateStatus = candidateStatus;
+  setCandidateResponseStatus(candidateResponseStatus: number) {
+    this.candidateResponseStatus = candidateResponseStatus;
+  }
+
+  setSopdText(sopdText: string) {
+    this.sopdText = sopdText;
+  }
+
+  reset() {
+    this.candidateData = {} as CandidateResponse;
+    this.candidateToken = '';
+    this.candidateResponseStatus = {} as number; 
+    this.sopdText = '';
   }
 
   //запроc на получение cтатуcа у токена кандидата
   async getStatusToken() {
     try {
+      if (!this.candidateToken) {
+        throw new Error('Токен не найден');
+      }
       const response = await CandidateService.getStatusToken(this.candidateToken);
-      // const response: { data: IStatus } = {
-      //   data: {
-      //     status: 'pending'
-      //   }
+      // const response = {
+      //   status: 200
       // };
-      console.log(response);
-      this.setCandidateStatus(response.data);
+      console.log(toJS(response));
+      this.setCandidateResponseStatus(response.status);
     } catch (e: any) {
       console.log(e.response?.data?.message);
       throw e;
@@ -54,8 +58,25 @@ export default class CandidateStore {
     try {
       const response = await CandidateService.sendCandidateData(this.candidateData);
       // const response = this.candidateData;
-      console.log(response);
+      console.log(toJS(response));
     } catch (e: any) {
+      console.log(e.response?.data?.message);
+      throw e;
+    }
+  };
+
+  //добавляем в стор текст СОПД
+  async getSOPDText() {
+    try {
+      const response = await CandidateService.getSOPDText();
+      // const response = {
+      //   data: {
+      //     sopdText: 'test sopdText22222'
+      //   }
+      // };
+      console.log(toJS(response));
+      this.setSopdText(response.data.sopdText);
+    } catch (e :any) {
       console.log(e.response?.data?.message);
       throw e;
     }

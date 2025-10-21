@@ -16,3 +16,46 @@
   font-weight: 600;
   font-display: swap;
 }
+
+.rsw-editor {
+  border: 1px solid #1281E2 !important;
+  border-radius: .375rem;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 400px !important;
+  overflow: hidden;
+}
+
+.rsw-toolbar {
+  align-items: center;
+  background-color: #1281E2 !important;
+  border: none !important;
+  display: flex;
+}
+
+.rsw-btn {
+  background: transparent;
+  border: 0;
+  color: #fff !important;
+  cursor: pointer;
+  font-size: 1em;
+  height: 2em;
+  outline: none;
+  padding: 0;
+  width: 2em;
+}
+
+.rsw-btn:hover {
+  background: #085CA6 !important;
+}
+
+.rsw-btn[data-active=true] {
+  background: #085CA6 !important;
+}
+
+.rsw-dd {
+  background-color: #085CA6 !important;
+  color: #fff !important;
+  border: 1px solid #1281E2 !important;
+}

@@ -1,7 +1,7 @@
 // import { useNavigate } from "react-router-dom";
 import styles from "./ErrorPage.module.css";
-import LogoSVG from "../../components/LogoSVG";
-import notFoundImage from "../../assets/notFound.svg";
+import LogoSVG from "@components/LogoSVG";
+import notFoundImage from "@assets/notFound.svg";
 
 function ErrorPage() {
   // const navigate = useNavigate();

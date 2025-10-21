@@ -1,6 +1,6 @@
 import styles from "./ResponseCandidatePage.module.css";
-import LogoSVG from "../../components/LogoSVG";
-import SuccessCheckmark from "../../components/SuccessCheckmark";
+import LogoSVG from "@components/LogoSVG";
+import SuccessCheckmark from "@components/SuccessCheckmark";
 //https://air.inno.tech/app/pdpa/confirmation - референс
 function ResponseCandidatePage() {
   return (

@@ -1,4 +1,4 @@
-import $api from "../http";
+import $api from "@http";
 import type { AxiosResponse } from "axios";
 
 export interface sopdTextResponse {
@@ -13,17 +13,17 @@ export interface letterTemplateResponse {
 export default class AdminService {
     //запрос на получение текста СОПД
     static async getSOPDText(): Promise<AxiosResponse<sopdTextResponse>> {
-        return $api.get<sopdTextResponse>('/sopd/recent');
+        return $api.get<sopdTextResponse>('/sopds/recent');
     };
 
     //запрос на получение шаблона письма
     static async saveSOPDText(sopdText: string): Promise<void> {
-        return $api.post('/sopd', sopdText);
+        return $api.post('/sopds', { sopdText });
     };
 
     //запрос на получение шаблона письма
     static async getLetterTemplate(): Promise<AxiosResponse<letterTemplateResponse>> {
-        return $api.get<letterTemplateResponse>('/template/recent');
+        return $api.get<letterTemplateResponse>('/templates/recent');
     };
 
     //запрос на получение шаблона письма
@@ -32,6 +32,6 @@ export default class AdminService {
             templateSubject: `${templateSubject}`,
             templateBody: `${templateBody}`
         };
-        return $api.post('/template', data);
+        return $api.post('/templates', data);
     };
 }

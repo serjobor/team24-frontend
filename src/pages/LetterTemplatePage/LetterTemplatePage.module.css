@@ -2,7 +2,7 @@
   min-height: 100vh;
   background: #f4f4f6;
   padding: 20px;
-  text-align: center;
+  /* text-align: center; */
 }
 
 .content {
@@ -54,39 +54,6 @@
 
 .group {
   margin-bottom: 30px;
-}
-
-.label {
-  display: block;
-  color: #2c3e50;
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 15px;
-  text-align: left;
-  font-family: 'ALSHauss', sans-serif;
-}
-
-.input {
-  width: 100%;
-  padding: 16px 20px;
-  border: 2px solid #e1e8ed;
-  border-radius: 8px;
-  font-size: 16px;
-  font-family: 'ALSHauss', sans-serif;
-  color: #2c3e50;
-  background: white;
-  margin-bottom: 24px;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-}
-.input:focus {
-  outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-}
-.input::placeholder {
-  color: #95a5a6;
-  font-style: italic;
 }
 
 .textarea {
@@ -194,6 +161,32 @@
   animation: spin 1s linear infinite;
 }
 
+.errorMessage {
+  color: #e74c3c;
+  background: #fdf2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 20px 0;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: 'ALSHauss', sans-serif;
+}
+
+.successMessage {
+  color: #27ae60;
+  background: #f2fdf3;
+  border: 1px solid #cafed1;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 20px 0;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: 'ALSHauss', sans-serif;
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -217,11 +210,7 @@
   .title {
     font-size: 20px;
   }
-
-  .label {
-    font-size: 16px;
-  }
-
+  
   .textarea {
     font-size: 14px;
     padding: 15px;

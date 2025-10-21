@@ -1,0 +1,467 @@
+.container {
+  min-height: 100vh;
+  background: #f4f4f6;
+  padding: 20px;
+  text-align: center;
+}
+
+.logoutbtn {
+  background: #e74c3c;
+  color: #FFF;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'ALSHauss', sans-serif;
+  margin-top: 40px;
+  width: 50%;
+  max-width: 950px;
+}
+
+.logoutbtn:hover {
+  background-color: #bb4333;
+}
+
+.logoutbtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card {
+  background: #FFF;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: 20px 20px 30px 20px;
+  animation: slideUp 0.6s ease-out;
+}
+
+.errorMessage {
+  color: #e74c3c;
+  background: #fdf2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 20px 0;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: 'ALSHauss', sans-serif;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.button {
+  background: #1281E2;
+  color: #FFF;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'ALSHauss', sans-serif;
+  min-width: 50px;
+}
+
+.deleteBtn {
+  background: #e74c3c;
+}
+
+.deleteBtn:hover {
+  background: #bb4333;
+}
+
+.button:hover {
+  background-color: #085CA6;
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Контейнер фильтров статусов */
+.filterContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 8px 0 24px 0;
+  align-items: center;
+}
+
+.filterLabel {
+  display: inline-flex;
+  align-items: center;
+  background: #f7fafc;
+  color: #4b5563;
+  border: 1px solid #e2e8f0;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  user-select: none;
+}
+
+/* Кнопки фильтра статуса */
+.filterBtn {
+  background: #fff;
+  color: #2c3e50;
+  border: 2px solid #e2e8f0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'ALSHauss', sans-serif;
+}
+
+.filterBtn:hover {
+  background: #f7fafc;
+  border-color: #1281E2;
+  color: #1281E2;
+}
+
+.filterBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Сброс фильтра */
+.filterResetBtn {
+  color: #4b5563;
+  border-color: #e2e8f0;
+}
+
+.filterResetBtn:hover {
+  color: #1f2937;
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.filterResetBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Активное состояние кнопки */
+.filterBtnActive {
+  background: #1281E2;
+  color: #FFF;
+  border-color: #1281E2;
+}
+
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.popupContent {
+  background: #FFF;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease-out;
+}
+
+.popupHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.popupTitle {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 20px;
+  font-weight: 600;
+  font-family: 'ALSHauss', sans-serif;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #718096;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  background: #f7fafc;
+  color: #2c3e50;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'ALSHauss', sans-serif;
+}
+
+.table th,
+.table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #edf2f7;
+  text-align: left;
+  vertical-align: top;
+  color: #2c3e50;
+}
+
+.table th {
+  font-weight: 700;
+  background: #f7fafc;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.statusWaiting {
+  background: #fffbea;
+  color: #975a16;
+}
+
+.statusApproved {
+  background: #e6fffa;
+  color: #047857;
+}
+
+.statusDeclined {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.candidateCell {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+}
+
+.candidateLine {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 8px;
+}
+
+.label {
+  color: #718096;
+  font-weight: 600;
+}
+
+.labelText {
+  display: flex;
+  gap: 5px;
+}
+
+.deleteButton {
+  background: #e74c3c;
+  color: #FFF;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'ALSHauss', sans-serif;
+  margin: 0 auto;
+}
+
+.deleteButton:hover {
+  background-color: #bb4333;
+  /* transform: scale(1.1); */
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 30px;
+  padding: 20px 0;
+}
+
+.paginationButton {
+  background: #FFF;
+  color: #2c3e50;
+  border: 2px solid #e2e8f0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'ALSHauss', sans-serif;
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.paginationButton:hover:not(.disabled) {
+  background: #f7fafc;
+  border-color: #1281E2;
+  color: #1281E2;
+}
+
+.paginationButton.active {
+  background: #1281E2;
+  color: #FFF;
+  border-color: #1281E2;
+}
+
+.paginationButton.active:hover {
+  background: #085CA6;
+  border-color: #085CA6;
+}
+
+.paginationButton.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f7fafc;
+  color: #a0aec0;
+  border-color: #e2e8f0;
+}
+
+.paginationButton.disabled:hover {
+  background: #f7fafc;
+  color: #a0aec0;
+  border-color: #e2e8f0;
+}
+
+/* .loadingMessage {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #666;
+} */
+
+/* .errorMessage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40px;
+  color: #d32f2f;
+  font-size: 16px;
+} */
+
+/* .retryButton {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.retryButton:hover {
+  background-color: #1565c0;
+} */
+
+@media (max-width: 768px) {
+  .candidateLine {
+    grid-template-columns: 1fr;
+  }
+  
+  .table th,
+  .table td {
+    padding: 10px 8px;
+    font-size: 14px;
+  }
+  
+  .deleteButton {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+  
+  .filterLabel {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+}

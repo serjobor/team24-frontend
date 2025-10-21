@@ -1,0 +1,77 @@
+stages:
+  - lint-and-scan
+  - build
+  - docker
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  TAG_NAME: $CI_COMMIT_SHORT_SHA
+  DOCKER_IMAGE: $DOCKERHUB_USERNAME/team24-frontend
+
+# Кэширование node_modules для ускорения последующих сборок
+cache:
+  paths:
+    - node_modules/
+
+# Статический анализ ДО сборки
+code_quality:
+  stage: lint-and-scan
+  image: semgrep/semgrep:latest
+  script:
+    - semgrep --config=auto --text-output semgrep-text-report.txt .
+  artifacts:
+    reports:
+      sast: semgrep-text-report.txt
+    expire_in: 1 week
+
+build_job:
+  stage: build
+  image: node:latest
+  script:
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 hour
+  only:
+    - main  # Запускать только для ветки main
+
+docker_build:
+  stage: docker
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_BUILDKIT: 1  # Ускоряет сборку через BuildKit
+  before_script:
+    # Проверяем наличие переменных перед использованием
+    - if [ -z "$DOCKERHUB_TOKEN" ] || [ -z "$DOCKERHUB_USERNAME" ]; then echo "Docker credentials not set!"; exit 1; fi
+    - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin docker.io # Токен передаётся через stdin (стандартный ввод), а не через аргументы командной строки
+  script:
+    - docker build . -t $DOCKER_IMAGE:$TAG_NAME
+    - docker push $DOCKER_IMAGE:$TAG_NAME
+  dependencies:
+    - build_job
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh-client
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+    - ssh-keyscan ${SERVER_IP} >> ~/.ssh/known_hosts
+  script:
+    - ssh -i ~/.ssh/id_ed25519 $HOST "
+      echo '$DOCKERHUB_TOKEN' | docker login -u '$DOCKERHUB_USERNAME' --password-stdin &&
+      cd ~/myapp &&
+      docker rm -f team24-frontend &&
+      docker run -d --name team24-frontend -p 5173:5173 $DOCKER_IMAGE_FRONTEND:$TAG_NAME &&
+      docker image prune -a
+      "

@@ -1,28 +1,69 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./SOPDPage.module.css";
 import { useNavigate } from "react-router-dom";
-import Header from "../../components/Header";
-import { Context } from "../../main";
+import Header from "@components/Header";
+import { Context } from "@main";
 import { observer } from "mobx-react-lite";
+import Editor from 'react-simple-wysiwyg';
+import Loading from "@/components/Loading";
 
 function SOPDPage() {
   const navigate = useNavigate();
   const { adminStore } = useContext(Context);
-  
+
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string>('');
+  const [saveError, setSaveError] = useState('');
+  const [saveSuccess, setSaveSuccess] = useState('');
+
+  const loadSOPDText = async () => {
+    setIsInitialLoading(true);
+    setLoadError('');
+    console.log("Попытка загрузки текста СОПД");
+
+    adminStore.reset();
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    try {
+      // Запрашиваем текст СОПД
+      await adminStore.getSOPDText();
+      console.log("Попытка загрузки текста СОПД удалась!");
+
+    } catch (error) {
+      console.log("Попытка загрузки текста СОПД НЕ удалась!", error);
+      setLoadError("Не удалось загрузить текст СОПД. Попробуйте обновить страницу.");
+    } finally {
+      setIsInitialLoading(false);
+    }
+  };
+
+  // Загружаем текст при монтировании компонента
+  useEffect(() => {
+    loadSOPDText();
+  }, []);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setSaveError('');
+    setSaveSuccess('');
+    
     // Здесь будет логика сохранения текста СОПД
     console.log("Попытка сохранения текста СОПД:", adminStore.sopdText);
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     try {
       await adminStore.saveSOPDText();
-      navigate('/admin');
+      setSaveSuccess('Текст СОПД сохранен!');
+      // navigate('/admin');
     } catch (error) {
       console.log("Попытка сохранения текста СОПД НЕ удалась!", error);
       console.log("Попытка сохранения текста СОПД НЕ удалась!:", adminStore.sopdText);
-      alert("Попытка сохранения текста СОПД НЕ удалась!");
+      // alert("Попытка сохранения текста СОПД НЕ удалась!");
+      setSaveError('Сохранить текст СОПД не удалось!');
     } finally {
       setIsLoading(false);
     }
@@ -34,46 +75,81 @@ function SOPDPage() {
     navigate('/admin');
   };
 
+  // Показываем загрузку при инициализации
+  if (isInitialLoading) {
+    return (
+      <div className={styles.container}>
+        <Header roleName="администратора" />
+        <div className={styles.content}>
+          <div className={styles.card}>
+            <div className={styles.loadingContainer}>
+              <h2 className={styles.title}>Загрузка текста СОПД...</h2>
+              <Loading />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container}>
-      <Header roleName="администратора"/>
+      <Header roleName="администратора" />
 
       <div className={styles.content}>
         <div className={styles.card}>
           <h2 className={styles.title}>Редактирование согласия на обработку персональных данных (СОПД)</h2>
-          
+          {loadError ? (<p className={styles.errorMessage}>{loadError}</p>) : ''}
+          {saveError ? (<p className={styles.errorMessage}>{saveError}</p>) : ''}
+          {saveSuccess ? (<p className={styles.successMessage}>{saveSuccess}</p>) : ''}
           <form onSubmit={handleSave} className={styles.form}>
             <div className={styles.group}>
               <label htmlFor="text" className={styles.label}>
                 Текст согласия на обработку персональных данных:
               </label>
-              <textarea
-                id="text"
-                value={adminStore.sopdText}
-                onChange={(e) => adminStore.setSopdText(e.target.value)}
-                className={styles.textarea}
-                placeholder="Введите текст согласия на обработку персональных данных..."
-                rows={20}
-              />
+              <div className={styles.editorContainer}>
+                {isLoading ? (
+                  <Loading />
+                ) : (
+                  <Editor
+                    value={adminStore.sopdText}
+                    onChange={(e) => adminStore.setSopdText(e.target.value)}
+                    placeholder="Введите текст..."
+                  />
+                )}
+              </div>
             </div>
-            
+
             <div className={styles.buttons}>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={handleBackToAdmin}
                 className={styles.exit}
                 disabled={isLoading}
               >
                 Назад
               </button>
-              
-              <button 
-                type="submit" 
-                className={styles.save}
-                disabled={isLoading}
-              >
-                {isLoading ? "Сохранение..." : "Сохранить"}
-              </button>
+
+              {loadError ?
+                (
+                  <button
+                    type="button"
+                    onClick={loadSOPDText}
+                    className={styles.save}
+                  >
+                    Обновить
+                  </button>
+                )
+                :
+                (
+                  <button
+                    type="submit"
+                    className={styles.save}
+                    disabled={isLoading}
+                  >Сохранить
+                  </button>
+                )
+              }
             </div>
           </form>
         </div>

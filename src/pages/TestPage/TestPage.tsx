@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import "./TestPage.css";
-import Header from "../../components/Header";
+import Header from "@components/Header";
 
 function TestPage() {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ function TestPage() {
       component: "AdminPage"
     },
     {
-      path: "/admin/sopd",
+      path: "/admin/sopds",
       name: "Редактирование СОПД",
       description: "Страница для редактирования согласия на обработку персональных данных",
       component: "SOPDPage"
@@ -41,13 +41,13 @@ function TestPage() {
     },
 
     {
-      path: "/registration/:id",
+      path: "/registration/:token",
       name: "Регистрация кандидата",
       description: "Страница для регистрации кандидата",
       component: "RegistrationPage"
     },
     {
-      path: "/registration/:id/sopd-request",
+      path: "/registration/:token/sopds-request",
       name: "Запрос на подписание СОПД",
       description: "Страница для подписания СОПД",
       component: "RequestCandidateSOPDPage"
@@ -68,17 +68,30 @@ function TestPage() {
       component: "ManagerPage"
     },
     {
-      path: "/manager/sent-emails",
+      path: "/manager/sent-emails/1",
       name: "Отправленные письма менеджером",
       description: "Страница менеджера с отпраленными письмами",
       component: "SentEmailsPage"
     },
+
     {
-      path: "/manager/send-emails",
-      name: "Отправка новых писем",
-      description: "Страница менеджера для отправки новых писем",
-      component: "SendNewEmailsPage"
-    }
+      path: "/super-admin",
+      name: "Супер Админ",
+      description: "Страница супер админа",
+      component: "SuperAdminPage"
+    },
+    {
+      path: "/super-admin/employees/1",
+      name: "Работники",
+      description: "Страница с таблицей всех работников",
+      component: "EmployeesPage"
+    },
+    {
+      path: "/super-admin/requests/1",
+      name: "Скрытые заявки",
+      description: "Страница с таблицей всех скрытых заявок менеджерами",
+      component: "AllDeletedRequestsPage"
+    },
   ];
 
   const handleRouteClick = (path: string) => {

@@ -1,11 +1,10 @@
-import { makeAutoObservable } from "mobx";
-import AdminService from "../services/AdminService";
+import { makeAutoObservable, toJS } from "mobx";
+import AdminService from "@services/AdminService";
 
 export default class AdminStore {
-  sopdText = {} as string;
-
-  templateSubject = {} as string;
-  templateBody = {} as string;
+  sopdText = '';
+  templateSubject = '';
+  templateBody = '';
 
   constructor() {
     makeAutoObservable(this);
@@ -17,10 +16,12 @@ export default class AdminStore {
 
   setTemplateSubject(templateSubject: string) {
     this.templateSubject = templateSubject;
+    // console.log('ТЕМА ПИСЬМА: ', this.templateSubject);
   }
 
   setTemplateBody(templateBody: string) {
     this.templateBody = templateBody;
+    // console.log('ТЕЛО ПИСЬМА: ', this.templateBody);
   }
 
   // setLetterTemplate(templateSubject: string, templateBody: string) {
@@ -37,7 +38,7 @@ export default class AdminStore {
       //     sopdText: 'test sopdText1'
       //   }
       // };
-      console.log(response);
+      console.log(toJS(response));
       this.setSopdText(response.data.sopdText);
     } catch (e :any) {
       console.log(e.response?.data?.message);
@@ -50,7 +51,7 @@ export default class AdminStore {
     try {
       const response = await AdminService.saveSOPDText(this.sopdText);
       // const response = this.sopdText;
-      console.log(response);
+      console.log(toJS(response));
     } catch (e :any) {
       console.log(e.response?.data?.message);
       throw e;
@@ -67,7 +68,7 @@ export default class AdminStore {
       //     templateBody: 'test templateBody'
       //   }
       // };
-      console.log(response);
+      console.log(toJS(response));
       this.setTemplateSubject(response.data.templateSubject);
       this.setTemplateBody(response.data.templateBody);
       // this.setLetterTemplate(response.data.templateSubject, response.data.templateBody);
@@ -85,11 +86,17 @@ export default class AdminStore {
       //   templateSubject: `${this.templateSubject}`,
       //   templateBody: `${this.templateBody}`
       // };
-      console.log(response);
+      console.log(toJS(response));
     } catch (e :any) {
       console.log(e.response?.data?.message);
       throw e;
     }
   };
+
+  reset() {
+    this.sopdText = '';
+    this.templateSubject = '';
+    this.templateBody = '';
+  }
 
 };

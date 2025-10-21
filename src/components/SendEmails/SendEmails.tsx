@@ -1,12 +1,21 @@
+import { observer } from "mobx-react-lite";
 import styles from "./SendEmails.module.css";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Context } from "@main";
 
-function SendEmails() {
+interface SendEmailsProps {
+  onClose?: () => void;
+  isPopup?: boolean;
+}
+
+function SendEmails({ onClose, isPopup = false }: SendEmailsProps) {
   const [email, setEmail] = useState("");
   const [emails, setEmails] = useState<string[]>([]);
   const [isSending, setIsSending] = useState(false);
   const navigate = useNavigate();
+
+  const { managerStore } = useContext(Context);
 
   const handleAddEmail = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,20 +38,24 @@ function SendEmails() {
     try {
       // TODO: интеграция с API
       console.log("Отправка писем:", emails);
-      await new Promise(r => setTimeout(r, 1000));
-      navigate("/manager");
+
+      managerStore.setCandidatEmails(emails);
+      await managerStore.addNewCandidates();
+      // await managerStore.getCandidates();
+
+      if (isPopup && onClose) {
+        onClose();
+      } else {
+        navigate("/manager");
+      }
     } finally {
       setIsSending(false);
     }
   };
 
-  const handleLogout = () => {
-    navigate("/manager");
-  };
-
   return (
     <>
-      <div className={styles.card}>
+      <div className={`${styles.card} ${isPopup ? styles.popup : ''}`}>
         <form onSubmit={handleAddEmail} className={styles.formRow}>
           <input
             type="email"
@@ -75,15 +88,6 @@ function SendEmails() {
       <div className={styles.actions}>
         <button
           type="button"
-          className={`${styles.button} ${styles.logoutbtn}`}
-          onClick={handleLogout}
-          disabled={isSending}
-        >
-          Назад
-        </button>
-
-        <button
-          type="button"
           className={`${styles.button} ${styles.sendBtn}`}
           onClick={handleSend}
           disabled={isSending || emails.length === 0}
@@ -95,4 +99,4 @@ function SendEmails() {
   );
 }
 
-export default SendEmails
+export default observer(SendEmails)
